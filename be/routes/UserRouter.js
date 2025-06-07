@@ -84,4 +84,38 @@ router.post('/', async (req, res) => {
   res.status(200).json({ login_name });
 });
 
+// CHỈNH SỬA THÔNG TIN CÁ NHÂN: PUT /:id
+// Chỉ cho phép user tự sửa thông tin của mình
+router.put('/:id', async (req, res) => {
+  const user_id = req.user && req.user._id;
+  if (!user_id) return res.status(401).send('Unauthorized');
+  if (user_id !== req.params.id) return res.status(403).send('Không có quyền sửa thông tin người khác');
+  const { first_name, last_name, location, description, occupation } = req.body;
+  const user = await User.findById(user_id);
+  if (!user) return res.status(404).send('Không tìm thấy user');
+  if (first_name) user.first_name = first_name;
+  if (last_name) user.last_name = last_name;
+  if (location !== undefined) user.location = location;
+  if (description !== undefined) user.description = description;
+  if (occupation !== undefined) user.occupation = occupation;
+  await user.save();
+  res.status(200).json({ message: 'Đã cập nhật thông tin cá nhân', user });
+});
+
+// ĐỔI MẬT KHẨU: PUT /change-password/:id
+// Chỉ cho phép user tự đổi mật khẩu
+router.put('/change-password/:id', async (req, res) => {
+  const user_id = req.user && req.user._id;
+  if (!user_id) return res.status(401).send('Unauthorized');
+  if (user_id !== req.params.id) return res.status(403).send('Không có quyền đổi mật khẩu người khác');
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) return res.status(400).send('Thiếu trường bắt buộc');
+  const user = await User.findById(user_id);
+  if (!user) return res.status(404).send('Không tìm thấy user');
+  if (user.password !== oldPassword) return res.status(400).send('Mật khẩu cũ không đúng');
+  user.password = newPassword;
+  await user.save();
+  res.status(200).send('Đã đổi mật khẩu thành công');
+});
+
 module.exports = router;

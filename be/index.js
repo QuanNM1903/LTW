@@ -5,43 +5,51 @@ const dbConnect = require("./db/dbConnect");
 const UserRouter = require("./routes/UserRouter");
 const PhotoRouter = require("./routes/PhotoRouter");
 const AdminRouter = require('./routes/AdminRouter');
-const session = require("express-session");
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'codesandbox_secret';
 
 dbConnect();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: '*',
+  credentials: true,
 }));
 app.use(express.json());
-app.use(session({
-  secret: "your_secret_key",
-  resave: false,
-  saveUninitialized: true,
-}));
-app.use("/api/user", UserRouter);
-app.use("/api/photo", PhotoRouter);
-app.use("/api/photosOfUser", PhotoRouter);
-app.use('/admin', AdminRouter);
 
-app.use((req, res, next) => {
+// Middleware xác thực JWT
+function authenticateJWT(req, res, next) {
   if (
+    req.path === '/' ||
+    req.path === '/favicon.ico' ||
     req.path.startsWith('/admin/login') ||
     req.path.startsWith('/admin/logout') ||
     (req.method === 'POST' && req.path === '/user')
   ) {
     return next();
   }
-  if (!req.session.user_id) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) return res.status(401).send('Unauthorized');
+      req.user = user;
+      next();
+    });
+  } else {
     return res.status(401).send('Unauthorized');
   }
-  next();
-});
+}
+
+app.use(authenticateJWT);
+app.use("/api/user", UserRouter);
+app.use("/api/photo", PhotoRouter);
+app.use("/api/photosOfUser", PhotoRouter);
+app.use('/admin', AdminRouter);
 
 app.get("/", (request, response) => {
   response.send({ message: "Hello from photo-sharing app API!" });
 });
 
-app.listen(8081, () => {
-  console.log("server listening on port 8081");
+app.listen(4000, () => {
+  console.log("server listening on port 4000");
 });

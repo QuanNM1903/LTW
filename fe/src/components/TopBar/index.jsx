@@ -11,7 +11,7 @@ function TopBar ({ user, onLogout, onAddPhoto, onShowLogin, onShowRegister }) {
       <AppBar className="topbar-appBar" position="absolute">
         <Toolbar>
           <Typography variant="h5" color="inherit" sx={{ flexGrow: 1 }}>
-            Nguyễn Minh Quân
+            Minh Quan Nguyen
           </Typography>
           {user ? (
             <>
@@ -19,16 +19,16 @@ function TopBar ({ user, onLogout, onAddPhoto, onShowLogin, onShowRegister }) {
                 Hi {user.first_name}
               </Typography>
               <Button color="inherit" onClick={onAddPhoto} sx={{ mr: 1 }}>
-                Thêm ảnh
+                Add Photo
               </Button>
               <Button color="inherit" onClick={onLogout}>
-                Đăng xuất
+                Logout
               </Button>
             </>
           ) : (
             <>
-              <Button color="inherit" onClick={onShowLogin} sx={{ mr: 1 }}>Đăng nhập</Button>
-              <Button color="inherit" onClick={onShowRegister}>Đăng ký</Button>
+              <Button color="inherit" onClick={onShowLogin} sx={{ mr: 1 }}>Login</Button>
+              <Button color="inherit" onClick={onShowRegister}>Register</Button>
             </>
           )}
         </Toolbar>

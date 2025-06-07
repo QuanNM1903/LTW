@@ -1,0 +1,8 @@
+/* Style cho form chỉnh sửa thông tin cá nhân */
+input {
+  display: block;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

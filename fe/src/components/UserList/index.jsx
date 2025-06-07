@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Divider, List, ListItem, ListItemText } from "@mui/material";
 import { Link } from "react-router-dom";
+// Sử dụng API_BASE_URL và JWT cho các request
 import fetchModel from "../../lib/fetchModelData";
 
 import "./styles.css";
@@ -11,7 +12,7 @@ import "./styles.css";
 function UserList () {
     const [users, setUsers] = useState([]);
     useEffect(() => {
-        fetchModel("http://localhost:8081/api/user/list").then((data) => {
+        fetchModel("/api/user/list").then((data) => {
             if (data) setUsers(data);
         });
     }, []);

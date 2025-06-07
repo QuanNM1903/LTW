@@ -1,3 +1,5 @@
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+
 /**
  * fetchModel - Fetch a model from the web server.
  *
@@ -5,7 +7,9 @@
  * @returns {Promise<any>}  A promise that resolves to the fetched data or null on error.
  */
 function fetchModel(url) {
-  return fetch(url)
+  const token = localStorage.getItem('jwt_token');
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  return fetch(`${API_BASE_URL}${url}`, { headers })
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
